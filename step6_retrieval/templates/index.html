@@ -203,7 +203,7 @@
     <div class="step-num">6</div>
     <div>
       <h1>🔍 Retrieve Similar Chunks</h1>
-      <p>Aapki query vector (Step 5) ko ChromaDB me store kiye gaye chunks vectors (Step 3) ke saath match kiya jata hai taaki related information dhoondi ja sake.</p>
+      <p>Your query vector (Step 5) is matched against the chunk vectors (Step 3) stored in ChromaDB to retrieve the most contextually relevant information.</p>
     </div>
   </div>
 
@@ -219,14 +219,14 @@
       <div class="info-icon">🎯</div>
       <div>
         <h4>ANN Search Logic</h4>
-        <p>Vector database <strong>Approximate Nearest Neighbor (ANN)</strong> search use karta hai taaki billions of documents me se milliseconds me matching documents dhoond sake.</p>
+        <p>Vector databases use <strong>Approximate Nearest Neighbor (ANN)</strong> search algorithms to query millions of high-dimensional vectors in milliseconds.</p>
       </div>
     </div>
     <div class="info-box">
       <div class="info-icon">📈</div>
       <div>
         <h4>Similarity Scores</h4>
-        <p>Cosine distance ya L2 (Euclidean) distance calculate karke top matching pieces ki relative similarity determine ki jati hai.</p>
+        <p>Mathematical calculations like Cosine distance or L2 (Euclidean) distance are used to gauge the relative closeness of semantic matches.</p>
       </div>
     </div>
   </div>
@@ -239,7 +239,7 @@
       <div class="form-group" style="flex: 2; min-width: 250px; margin-bottom: 0;">
         <label>ChromaDB Collection</label>
         <select id="sourceTable">
-          <option value="">⏳ Collections load ho rahi hain...</option>
+          <option value="">⏳ Loading collections...</option>
         </select>
       </div>
       
@@ -303,13 +303,13 @@
       const data = await res.json();
 
       if (!data.collections || data.collections.length === 0) {
-        sel.innerHTML = '<option value="">❌ Koi collection nahi mili — Step 3 se Sync karo</option>';
+        sel.innerHTML = '<option value="">❌ No collections found — sync in Step 3 first</option>';
         status.style.color = 'var(--yellow)';
-        status.textContent = '⚠️ Step 3 (localhost:8002) mein koi collection sync nahi hui hai.';
+        status.textContent = '⚠️ No collections synchronized in Step 3 (localhost:8002) yet.';
         return;
       }
 
-      sel.innerHTML = '<option value="">-- Collection chunao --</option>';
+      sel.innerHTML = '<option value="">-- Select a Collection --</option>';
       data.collections.forEach(c => {
         const opt = document.createElement('option');
         opt.value = c.name;
@@ -338,12 +338,12 @@
 
     if (!query) {
       status.style.color = 'var(--yellow)';
-      status.textContent = '⚠️ Query empty nahi ho sakti!';
+      status.textContent = '⚠️ Query cannot be empty!';
       return;
     }
     if (!table) {
       status.style.color = 'var(--yellow)';
-      status.textContent = '⚠️ Pehle database collection choose karein!';
+      status.textContent = '⚠️ Please select a database collection first!';
       return;
     }
 
@@ -364,7 +364,7 @@
 
       if (!data.results || data.results.length === 0) {
         status.style.color = 'var(--yellow)';
-        status.textContent = '⚠️ Query ke liye koi chunks nahi mile.';
+        status.textContent = '⚠️ No chunks found matching the query.';
         return;
       }
 
@@ -470,7 +470,7 @@
     </div>
     <!-- Modal Footer -->
     <div style="padding:1rem 1.5rem; border-top:1px solid var(--border); display:flex; justify-content:space-between; align-items:center;">
-      <span style="color:var(--text-muted); font-size:0.78rem;">Esc ya bahar click karo band karne ke liye</span>
+      <span style="color:var(--text-muted); font-size:0.78rem;">Press Esc or click outside to close</span>
       <div style="display:flex; gap:0.6rem;">
          <button id="modal-prev-btn" onclick="navigateModal(-1)" style="background:rgba(255,255,255,0.07); border:1px solid var(--border); color:var(--text-primary); padding:0.4rem 1rem; border-radius:8px; cursor:pointer; font-size:0.82rem;">&#8592; Prev</button>
          <button id="modal-next-btn" onclick="navigateModal(1)" style="background:rgba(255,255,255,0.07); border:1px solid var(--border); color:var(--text-primary); padding:0.4rem 1rem; border-radius:8px; cursor:pointer; font-size:0.82rem;">Next &#8594;</button>

@@ -239,7 +239,7 @@
     <div class="step-num">2</div>
     <div>
       <h1>🔢 Embedding Generator</h1>
-      <p>Text chunks ko 384-dimensional vectors mein convert karo using <strong>all-MiniLM-L6-v2</strong></p>
+      <p>Convert text chunks into 384-dimensional vectors using <strong>all-MiniLM-L6-v2</strong></p>
     </div>
   </div>
 
@@ -254,29 +254,29 @@
     <div class="info-box">
       <div class="info-icon">📝</div>
       <div>
-        <h4>Embedding kya hai?</h4>
-        <p>Text → Numbers ka array. "Dog" aur "Puppy" ke numbers milte-julte honge kyunki meaning similar hai.</p>
+        <h4>What is an Embedding?</h4>
+        <p>Text → Array of numbers. Words like "Dog" and "Puppy" will have similar numbers because their meanings are close.</p>
       </div>
     </div>
     <div class="info-box">
       <div class="info-icon">📐</div>
       <div>
         <h4>384 Dimensions</h4>
-        <p>Har chunk → 384 numbers ka ek vector. Similar text ke vectors ek doosre ke paas hote hain space mein.</p>
+        <p>Each chunk → a vector of 384 numbers. Vectors of similar text are located close to each other in space.</p>
       </div>
     </div>
     <div class="info-box">
       <div class="info-icon">🤖</div>
       <div>
         <h4>Model: all-MiniLM-L6-v2</h4>
-        <p>Free, local model. No API key chahiye. Sentence Transformers library se run hota hai.</p>
+        <p>Free, local model. No API key required. Runs locally using the Sentence Transformers library.</p>
       </div>
     </div>
     <div class="info-box">
       <div class="info-icon">💾</div>
       <div>
         <h4>PostgreSQL Storage</h4>
-        <p>Embeddings usi PostgreSQL mein <code>embeddings</code> table mein store honge.</p>
+        <p>Embeddings will be stored in the <code>embeddings</code> table of the same PostgreSQL database.</p>
       </div>
     </div>
   </div>
@@ -291,9 +291,9 @@
     </div>
 
     <div class="form-group">
-      <label>Chunk Table Select karo (Step 1 mein save ki gayi tables)</label>
+      <label>Select Chunk Table (Tables saved in Step 1)</label>
       <select id="table-select">
-        <option value="">-- Pehle Load Tables dabao --</option>
+        <option value="">-- Click Load Tables First --</option>
       </select>
     </div>
 
@@ -322,7 +322,7 @@
 
     <div class="embed-progress-wrap" id="progress-wrap">
       <div class="embed-progress-label">
-        <span id="progress-text">Embedding chal raha hai...</span>
+        <span id="progress-text">Generating embeddings...</span>
         <span id="progress-pct">0%</span>
       </div>
       <div class="embed-progress-bar"><div class="embed-progress-fill" id="progress-fill"></div></div>
@@ -355,9 +355,9 @@ async function loadTables() {
     const res = await fetch('/api/tables?' + new URLSearchParams({ connection_uri: uri }));
     const data = await res.json();
     const sel = $('table-select');
-    sel.innerHTML = '<option value="">-- Table chunao --</option>';
+    sel.innerHTML = '<option value="">-- Select a table --</option>';
     if (!data.tables || data.tables.length === 0) {
-      showAlert('config-status', 'Koi chunk table nahi mili. Pehle Step 1 se chunks save karo!', 'warning');
+      showAlert('config-status', 'No chunk table found. Please save chunks in Step 1 first!', 'warning');
       return;
     }
     data.tables.forEach(t => {
@@ -366,7 +366,7 @@ async function loadTables() {
       sel.appendChild(opt);
     });
     sel.addEventListener('change', () => { if (sel.value) loadStats(); });
-    showAlert('config-status', `${data.tables.length} chunk table(s) mili!`, 'success');
+    showAlert('config-status', `Found ${data.tables.length} chunk table(s)!`, 'success');
     $('stats-btn').style.display = 'inline-flex';
   } catch(e) {
     showAlert('config-status', e.message, 'error');
@@ -379,7 +379,7 @@ async function loadTables() {
 async function loadStats() {
   const uri   = $('db-uri').value.trim();
   const table = $('table-select').value;
-  if (!table) { showAlert('config-status', 'Pehle ek table select karo!', 'warning'); return; }
+  if (!table) { showAlert('config-status', 'Please select a table first!', 'warning'); return; }
 
   try {
     const res = await fetch('/api/stats', {
@@ -402,13 +402,13 @@ async function loadStats() {
 async function generateEmbeddings() {
   const uri   = $('db-uri').value.trim();
   const table = $('table-select').value;
-  if (!table) { showAlert('embed-status', 'Table select karo!', 'warning'); return; }
+  if (!table) { showAlert('embed-status', 'Please select a table first!', 'warning'); return; }
 
   const pending = parseInt($('stat-pending').textContent);
-  if (pending === 0) { showAlert('embed-status', 'Sab chunks pehle se embed hain! Preview dekho.', 'info'); loadPreview(); return; }
+  if (pending === 0) { showAlert('embed-status', 'All chunks are already embedded! Check the preview below.', 'info'); loadPreview(); return; }
 
   $('embed-btn').disabled = true;
-  $('embed-btn').innerHTML = '<span class="spinner"></span> Embedding chal raha hai...';
+  $('embed-btn').innerHTML = '<span class="spinner"></span> Generating embeddings...';
   $('progress-wrap').style.display = 'block';
 
   // Animate progress bar (indeterminate style)
@@ -562,7 +562,7 @@ window.addEventListener('DOMContentLoaded', () => loadTables());
     </div>
     <!-- Modal Footer -->
     <div style="padding:1rem 1.5rem; border-top:1px solid var(--border); display:flex; justify-content:space-between; align-items:center;">
-      <span style="color:var(--text-muted); font-size:0.78rem;">Esc ya bahar click karo band karne ke liye</span>
+      <span style="color:var(--text-muted); font-size:0.78rem;">Press Esc or click outside to close</span>
       <div style="display:flex; gap:0.6rem;">
         <button id="modal-prev-btn" onclick="navigateModal(-1)" style="background:rgba(255,255,255,0.07); border:1px solid var(--border); color:var(--text-primary); padding:0.4rem 1rem; border-radius:8px; cursor:pointer; font-size:0.82rem;">&#8592; Prev</button>
         <button id="modal-next-btn" onclick="navigateModal(1)" style="background:rgba(255,255,255,0.07); border:1px solid var(--border); color:var(--text-primary); padding:0.4rem 1rem; border-radius:8px; cursor:pointer; font-size:0.82rem;">Next &#8594;</button>

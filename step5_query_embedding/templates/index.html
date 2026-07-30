@@ -205,7 +205,7 @@
     <div class="step-num">5</div>
     <div>
       <h1>🧠 Embed the Query</h1>
-      <p>Aapke question/query ko text se vector dimensions vector me translate kiya jaata hai, taaki iska matching semantic context database se dhoonda jaa sake.</p>
+      <p>Translate your question/query from text into a high-dimensional vector, enabling semantic matching against the database.</p>
     </div>
   </div>
 
@@ -221,14 +221,14 @@
       <div class="info-icon">🔄</div>
       <div>
         <h4>Same Model Consistency</h4>
-        <p>Hamesha vahi exact embedding model (<strong>all-MiniLM-L6-v2</strong>) use kiya jata hai jo Step 2 me content chunks ko embed karne ke liye use kiya gaya tha.</p>
+        <p>Uses the exact same embedding model (<strong>all-MiniLM-L6-v2</strong>) that was used to embed content chunks in Step 2 to ensure semantic consistency.</p>
       </div>
     </div>
     <div class="info-box">
       <div class="info-icon">📐</div>
       <div>
         <h4>384 Dimensions Array</h4>
-        <p>Query ek numeric vector array me transform ho jati hai, jisme direction aur semantic relationships store hoti hain.</p>
+        <p>The query is transformed into a numeric vector array that captures its semantic meaning and contextual direction.</p>
       </div>
     </div>
   </div>
@@ -299,7 +299,7 @@
     const resultsPanel = $('results-panel');
 
     if (!query) {
-      errAlert.textContent = "⚠️ Query field khali nahi ho sakti!";
+      errAlert.textContent = "⚠️ Query field cannot be empty!";
       errAlert.style.display = 'block';
       succAlert.style.display = 'none';
       return;

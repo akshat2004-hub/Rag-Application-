@@ -85,7 +85,7 @@ def search_similar_chunks(uri: str, source_table: str, query: str, top_k: int = 
     conn.close()
 
     if not rows:
-        return {"query": query, "results": [], "message": "Is table ka koi embedding nahi mila."}
+        return {"query": query, "results": [], "message": "No embeddings found for this table."}
 
     results = []
     for r in rows:

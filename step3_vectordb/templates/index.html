@@ -194,7 +194,7 @@
     <div class="step-num">3</div>
     <div>
       <h1>🗄️ Vector DB (Chroma)</h1>
-      <p>Embeddings ko ek actual Vector Database (ChromaDB) mein store karke Semantic Search karo.</p>
+      <p>Sync embeddings to an actual Vector Database (ChromaDB) and run Semantic Searches.</p>
     </div>
   </div>
 
@@ -207,15 +207,15 @@
     <div class="info-box">
       <div class="info-icon">📦</div>
       <div>
-        <h4>Vector DB kyu?</h4>
-        <p>Normal DB sirf exact words match karta hai. Vector DB "Meaning" match karta hai using numbers.</p>
+        <h4>Why Vector DB?</h4>
+        <p>Traditional databases only match exact keywords. A Vector DB matches semantic meaning using mathematical coordinates.</p>
       </div>
     </div>
     <div class="info-box">
       <div class="info-icon">🔍</div>
       <div>
         <h4>Semantic Search</h4>
-        <p>Aap jo bhi search karoge, usko vector banayenge aur ChromaDB mein sabse similar chunks dhundenge (Cosine Similarity).</p>
+        <p>Your search queries are converted into vectors to find the most contextually similar chunks in ChromaDB via Cosine Similarity.</p>
       </div>
     </div>
   </div>
@@ -225,9 +225,9 @@
     <div class="panel-title"><span class="dot dot-orange"></span> 1. Sync Postgres to ChromaDB</div>
     
     <div class="form-group">
-      <label>Embedded Table Select karo (Step 2 se)</label>
+      <label>Select Embedded Table (from Step 2)</label>
       <select id="table-select">
-        <option value="">-- Pehle Load Tables dabao --</option>
+        <option value="">-- Click Load Tables First --</option>
       </select>
     </div>
 
@@ -243,7 +243,7 @@
     <div class="panel-title"><span class="dot dot-pink"></span> 2. Semantic Search</div>
     
     <div class="search-box">
-      <input type="text" id="query-input" placeholder="Kuch search karo (e.g., 'machine learning kya hai?')" onkeypress="handleEnter(event)"/>
+      <input type="text" id="query-input" placeholder="Search for something (e.g., 'what is machine learning?')" onkeypress="handleEnter(event)"/>
       <button class="btn btn-primary" id="search-btn" onclick="performSearch()">🔍 Search</button>
     </div>
     <div id="search-status"></div>
@@ -274,10 +274,10 @@ async function loadTables() {
     }
     
     const sel = $('table-select');
-    sel.innerHTML = '<option value="">-- Table chunao --</option>';
+    sel.innerHTML = '<option value="">-- Select a table --</option>';
     
     if (!data.tables || data.tables.length === 0) {
-      showAlert('sync-status', 'PostgreSQL connect ho gaya, par "embeddings" table mein koi data nahi mila.', 'warning');
+      showAlert('sync-status', 'Successfully connected to PostgreSQL, but no data was found in the "embeddings" table.', 'warning');
       return;
     }
     data.tables.forEach(t => {
@@ -285,7 +285,7 @@ async function loadTables() {
       opt.value = t.name; opt.textContent = `${t.name} (${t.count} chunks)`;
       sel.appendChild(opt);
     });
-    showAlert('sync-status', `${data.tables.length} table(s) mili jisme embeddings hain.`, 'success');
+    showAlert('sync-status', `Found ${data.tables.length} table(s) with embeddings.`, 'success');
   } catch(e) {
     showAlert('sync-status', e.message, 'error');
   } finally {
@@ -296,7 +296,7 @@ async function loadTables() {
 
 async function syncToChroma() {
   const table = $('table-select').value;
-  if (!table) { showAlert('sync-status', 'Pehle ek table select karo!', 'error'); return; }
+  if (!table) { showAlert('sync-status', 'Please select a table first!', 'error'); return; }
 
   $('sync-btn').disabled = true;
   $('sync-btn').innerHTML = '<span class="spinner"></span> Syncing...';
@@ -328,7 +328,7 @@ async function performSearch() {
   const table = $('table-select').value;
   const query = $('query-input').value.trim();
   
-  if (!query) { showAlert('search-status', 'Query khali nahi ho sakti!', 'error'); return; }
+  if (!query) { showAlert('search-status', 'Search query cannot be empty!', 'error'); return; }
   
   $('search-btn').disabled = true;
   $('search-btn').innerHTML = '<span class="spinner"></span>';
@@ -344,7 +344,7 @@ async function performSearch() {
     if (!res.ok) throw new Error(data.detail || data.message);
     
     if (data.results.length === 0) {
-      $('results-container').innerHTML = '<div style="color:var(--text-muted);font-size:0.85rem;">Koi relevant chunk nahi mila.</div>';
+      $('results-container').innerHTML = '<div style="color:var(--text-muted);font-size:0.85rem;">No relevant chunks found.</div>';
       return;
     }
 
@@ -437,7 +437,7 @@ window.addEventListener('DOMContentLoaded', () => loadTables());
     </div>
     <!-- Modal Footer -->
     <div style="padding:1rem 1.5rem; border-top:1px solid var(--border); display:flex; justify-content:space-between; align-items:center;">
-      <span style="color:var(--text-muted); font-size:0.78rem;">Esc ya bahar click karo band karne ke liye</span>
+      <span style="color:var(--text-muted); font-size:0.78rem;">Press Esc or click outside to close</span>
       <div style="display:flex; gap:0.6rem;">
          <button id="modal-prev-btn" onclick="navigateModal(-1)" style="background:rgba(255,255,255,0.07); border:1px solid var(--border); color:var(--text-primary); padding:0.4rem 1rem; border-radius:8px; cursor:pointer; font-size:0.82rem;">&#8592; Prev</button>
          <button id="modal-next-btn" onclick="navigateModal(1)" style="background:rgba(255,255,255,0.07); border:1px solid var(--border); color:var(--text-primary); padding:0.4rem 1rem; border-radius:8px; cursor:pointer; font-size:0.82rem;">Next &#8594;</button>

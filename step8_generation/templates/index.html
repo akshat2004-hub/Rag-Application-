@@ -197,7 +197,7 @@
     <div class="step-num">8</div>
     <div>
       <h1>🤖 LLM Answer Generation</h1>
-      <p>Final prompt template (Step 7) ko Gemini (LLM) model ke paas bheja jata hai, jo context chunks ki base par final response generate karta hai.</p>
+      <p>The final prompt template (Step 7) is sent to the Gemini (LLM) model, which generates the final response grounded in the context chunks.</p>
     </div>
   </div>
 
@@ -213,14 +213,14 @@
       <div class="info-icon">🔮</div>
       <div>
         <h4>Context Grounding Response</h4>
-        <p>LLM sirf context ke data se match karte answers hi formulates karta hai, and outside knowledge use karne se block hota hai.</p>
+        <p>The LLM strictly formulates its answer using the retrieved context, and is blocked from hallucinating or using outside training data.</p>
       </div>
     </div>
     <div class="info-box">
       <div class="info-icon">🚀</div>
       <div>
         <h4>Gemini 2.5 Flash</h4>
-        <p>Hum state-of-the-art **Gemini 2.5 Flash** model use kar rahe hain, jo efficient speed aur heavy context window processing support karta hai.</p>
+        <p>Uses the state-of-the-art **Gemini 2.5 Flash** model, which provides blazing fast speed and supports large context window processing.</p>
       </div>
     </div>
   </div>
@@ -233,7 +233,7 @@
       <div class="form-group" style="flex: 2; min-width: 250px; margin-bottom: 0;">
         <label>ChromaDB Collection</label>
         <select id="sourceTable">
-          <option value="">⏳ Collections load ho rahi hain...</option>
+          <option value="">⏳ Loading collections...</option>
         </select>
       </div>
       
@@ -306,13 +306,13 @@
       const data = await res.json();
 
       if (!data.collections || data.collections.length === 0) {
-        sel.innerHTML = '<option value="">❌ Koi collection nahi mili — Step 3 se Sync karo</option>';
+        sel.innerHTML = '<option value="">❌ No collections found — sync in Step 3 first</option>';
         status.style.color = 'var(--yellow)';
-        status.textContent = '⚠️ Step 3 (localhost:8002) mein koi collection sync nahi hui hai.';
+        status.textContent = '⚠️ No collections synchronized in Step 3 (localhost:8002) yet.';
         return;
       }
 
-      sel.innerHTML = '<option value="">-- Collection chunao --</option>';
+      sel.innerHTML = '<option value="">-- Select a Collection --</option>';
       data.collections.forEach(c => {
         const opt = document.createElement('option');
         opt.value = c.name;
@@ -341,12 +341,12 @@
 
     if (!query) {
       status.style.color = 'var(--yellow)';
-      status.textContent = '⚠️ Question khali nahi ho sakta!';
+      status.textContent = '⚠️ Question cannot be empty!';
       return;
     }
     if (!table) {
       status.style.color = 'var(--yellow)';
-      status.textContent = '⚠️ Pehle collection choose karein!';
+      status.textContent = '⚠️ Please select a collection first!';
       return;
     }
 
@@ -474,7 +474,7 @@
     </div>
     <!-- Modal Footer -->
     <div style="padding:1rem 1.5rem; border-top:1px solid var(--border); display:flex; justify-content:space-between; align-items:center;">
-      <span style="color:var(--text-muted); font-size:0.78rem;">Esc ya bahar click karo band karne ke liye</span>
+      <span style="color:var(--text-muted); font-size:0.78rem;">Press Esc or click outside to close</span>
       <div style="display:flex; gap:0.6rem;">
          <button id="modal-prev-btn" onclick="navigateModal(-1)" style="background:rgba(255,255,255,0.07); border:1px solid var(--border); color:var(--text-primary); padding:0.4rem 1rem; border-radius:8px; cursor:pointer; font-size:0.82rem;">&#8592; Prev</button>
          <button id="modal-next-btn" onclick="navigateModal(1)" style="background:rgba(255,255,255,0.07); border:1px solid var(--border); color:var(--text-primary); padding:0.4rem 1rem; border-radius:8px; cursor:pointer; font-size:0.82rem;">Next &#8594;</button>

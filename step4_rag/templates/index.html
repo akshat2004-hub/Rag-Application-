@@ -195,7 +195,7 @@
     <div class="step-num">4</div>
     <div>
       <h1>🤖 Retrieval-Augmented Generation</h1>
-      <p>ChromaDB se similar chunks retrieve karo, aur LLM (Gemini) ko context de kar final answer generate karo.</p>
+      <p>Retrieve similar chunks from ChromaDB and feed them as context to the LLM (Gemini) to generate the final answer.</p>
     </div>
   </div>
 
@@ -209,14 +209,14 @@
       <div class="info-icon">⚙️</div>
       <div>
         <h4>Backend API Key</h4>
-        <p>API Key backend code (core/generator.py) mein configure ki gayi hai, user ko daalne ki zaroorat nahi hai.</p>
+        <p>The API key is pre-configured on the backend (core/generator.py), so you don't need to provide one.</p>
       </div>
     </div>
     <div class="info-box">
       <div class="info-icon">✨</div>
       <div>
         <h4>Contextual Generation</h4>
-        <p>AI sirf aapke diye gaye data (Vector DB se aaye chunks) ke basis par answer dega, na ki apni knowledge se.</p>
+        <p>The AI will construct its response strictly based on your provided data (chunks retrieved from Vector DB) rather than generic training knowledge.</p>
       </div>
     </div>
   </div>
@@ -226,9 +226,9 @@
     <div class="panel-title"><span class="dot"></span> 1. Settings</div>
     <div style="display: flex; gap: 1rem; align-items: flex-end;">
       <div class="form-group" style="flex: 1; margin-bottom:0;">
-        <label>ChromaDB Collection (Step 3 se synced)</label>
+        <label>ChromaDB Collection (Synced in Step 3)</label>
         <select id="sourceTable">
-          <option value="">⏳ Collections load ho rahi hain...</option>
+          <option value="">⏳ Loading collections...</option>
         </select>
       </div>
       <button class="btn btn-secondary" onclick="loadCollections()" style="flex-shrink:0; margin-bottom:0;">🔄 Refresh</button>
@@ -241,7 +241,7 @@
     <div class="panel-title"><span class="dot dot-purple"></span> 2. Ask a Question</div>
     
     <div class="search-box">
-      <input type="text" id="query-input" placeholder="Apne documents ke baare mein kuch pucho..." onkeypress="handleEnter(event)"/>
+      <input type="text" id="query-input" placeholder="Ask something about your documents..." onkeypress="handleEnter(event)"/>
       <button class="btn btn-primary" id="ask-btn" onclick="performGenerate()">🧠 Generate Answer</button>
     </div>
     
@@ -281,13 +281,13 @@ async function loadCollections() {
     const data = await res.json();
 
     if (!data.collections || data.collections.length === 0) {
-      sel.innerHTML = '<option value="">❌ Koi collection nahi mili — Step 3 se Sync karo pehle</option>';
+      sel.innerHTML = '<option value="">❌ No collections found — sync in Step 3 first</option>';
       status.style.color = 'var(--yellow)';
-      status.textContent = '⚠️ Step 3 (localhost:8002) mein koi table sync nahi hui hai.';
+      status.textContent = '⚠️ No collections synchronized in Step 3 (localhost:8002) yet.';
       return;
     }
 
-    sel.innerHTML = '<option value="">-- Collection chunao --</option>';
+    sel.innerHTML = '<option value="">-- Select a Collection --</option>';
     data.collections.forEach(c => {
       const opt = document.createElement('option');
       opt.value = c.name;
@@ -299,7 +299,7 @@ async function loadCollections() {
     if (data.collections.length === 1) sel.value = data.collections[0].name;
 
     status.style.color = 'var(--green)';
-    status.textContent = `✅ ${data.collections.length} collection(s) mili ChromaDB se`;
+    status.textContent = `✅ Found ${data.collections.length} collection(s) in ChromaDB`;
   } catch(e) {
     sel.innerHTML = '<option value="">❌ Load failed</option>';
     status.style.color = 'var(--pink)';
@@ -314,13 +314,13 @@ async function performGenerate() {
 
   if (!query) {
     status.style.color = 'var(--yellow)';
-    status.textContent = '⚠️ Query khali nahi ho sakti!';
+    status.textContent = '⚠️ Query cannot be empty!';
     $('query-input').focus();
     return;
   }
   if (!table) {
     status.style.color = 'var(--yellow)';
-    status.textContent = '⚠️ Pehle collection select karo!';
+    status.textContent = '⚠️ Please select a collection first!';
     return;
   }
 
@@ -363,7 +363,7 @@ async function performGenerate() {
         </div>
       `).join('');
     } else {
-      $('sources-container').innerHTML = '<div style="color:var(--text-muted);font-size:0.85rem;">Koi context chunk nahi mila.</div>';
+      $('sources-container').innerHTML = '<div style="color:var(--text-muted);font-size:0.85rem;">No context chunks found.</div>';
     }
 
     $('results-container').style.display = 'block';
@@ -446,7 +446,7 @@ window.addEventListener('DOMContentLoaded', loadCollections);
     </div>
     <!-- Modal Footer -->
     <div style="padding:1rem 1.5rem; border-top:1px solid var(--border); display:flex; justify-content:space-between; align-items:center;">
-      <span style="color:var(--text-muted); font-size:0.78rem;">Esc ya bahar click karo band karne ke liye</span>
+      <span style="color:var(--text-muted); font-size:0.78rem;">Press Esc or click outside to close</span>
       <div style="display:flex; gap:0.6rem;">
          <button id="modal-prev-btn" onclick="navigateModal(-1)" style="background:rgba(255,255,255,0.07); border:1px solid var(--border); color:var(--text-primary); padding:0.4rem 1rem; border-radius:8px; cursor:pointer; font-size:0.82rem;">&#8592; Prev</button>
          <button id="modal-next-btn" onclick="navigateModal(1)" style="background:rgba(255,255,255,0.07); border:1px solid var(--border); color:var(--text-primary); padding:0.4rem 1rem; border-radius:8px; cursor:pointer; font-size:0.82rem;">Next &#8594;</button>

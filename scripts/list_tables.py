@@ -12,7 +12,7 @@ cur.execute("""
 """)
 
 rows = cur.fetchall()
-print(f"\n=== PostgreSQL mein kul {len(rows)} table(s) hain ===\n")
+print(f"\n=== Total {len(rows)} table(s) in PostgreSQL ===\n")
 for r in rows:
     print(f"  >> {r[0]}  (size: {r[1]})")
 

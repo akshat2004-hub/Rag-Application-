@@ -18,6 +18,13 @@ from dotenv import load_dotenv, find_dotenv
 load_dotenv(find_dotenv())
 DATABASE_URL = os.environ.get("DATABASE_URL")
 
+# Fallback: if DATABASE_URL is not set, explicitly look for the root .env
+if not DATABASE_URL:
+    root_env_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", ".env"))
+    if os.path.exists(root_env_path):
+        load_dotenv(root_env_path, override=True)
+        DATABASE_URL = os.environ.get("DATABASE_URL")
+
 class ChunkRequest(BaseModel):
     text: str
     strategy: str = "fixed"       # fixed | recursive | sentence
@@ -78,7 +85,7 @@ async def chunk_document(req: ChunkRequest):
 async def test_postgres(req: PostgresTestRequest):
     """Test connection to PostgreSQL database using DATABASE_URL from .env."""
     if not DATABASE_URL:
-        raise HTTPException(status_code=500, detail="DATABASE_URL not set in backend .env")
+        raise HTTPException(status_code=500, detail="DATABASE_URL not set in .env")
         
     success, msg = test_db_connection(
         connection_uri=DATABASE_URL
@@ -92,7 +99,7 @@ async def test_postgres(req: PostgresTestRequest):
 async def store_postgres(req: PostgresStoreRequest):
     """Store generated chunks into PostgreSQL database using DATABASE_URL from .env."""
     if not DATABASE_URL:
-        raise HTTPException(status_code=500, detail="DATABASE_URL not set in backend .env")
+        raise HTTPException(status_code=500, detail="DATABASE_URL not set in .env")
         
     if not req.chunks:
         raise HTTPException(status_code=400, detail="No chunks provided to store")
@@ -117,7 +124,7 @@ class PostgresViewRequest(BaseModel):
 async def view_postgres_table(req: PostgresViewRequest):
     """Fetch saved chunks from PostgreSQL table for display using DATABASE_URL from .env."""
     if not DATABASE_URL:
-        raise HTTPException(status_code=500, detail="DATABASE_URL not set in backend .env")
+        raise HTTPException(status_code=500, detail="DATABASE_URL not set in .env")
         
     import psycopg2
     from psycopg2.extras import RealDictCursor

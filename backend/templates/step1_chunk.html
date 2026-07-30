@@ -83,7 +83,7 @@
 
   <!-- Output Panel -->
   <div class="panel" id="output-panel" style="display:none;">
-    <div class="panel-title"><span class="dot"></span> Generated Chunks <small style="font-size:0.72rem;color:var(--text-muted);font-weight:400;">— kisi bhi chunk par click karo full text dekhne ke liye</small></div>
+    <div class="panel-title"><span class="dot"></span> Generated Chunks <small style="font-size:0.72rem;color:var(--text-muted);font-weight:400;">— click on any chunk to view full text</small></div>
     <div id="stats-row" class="stats-row" style="margin-bottom:1rem;"></div>
     <div class="chunks-container" id="chunks-list"></div>
   </div>
@@ -106,7 +106,7 @@
       </div>
       <!-- Modal Footer -->
       <div style="padding:1rem 1.5rem; border-top:1px solid var(--border); display:flex; justify-content:space-between; align-items:center;">
-        <span style="color:var(--text-muted); font-size:0.78rem;">Esc ya bahar click karo band karne ke liye</span>
+        <span style="color:var(--text-muted); font-size:0.78rem;">Press Esc or click outside to close</span>
         <div style="display:flex; gap:0.6rem;">
           <button id="modal-prev-btn" onclick="navigateModal(-1)" style="background:rgba(255,255,255,0.07); border:1px solid var(--border); color:var(--text-primary); padding:0.4rem 1rem; border-radius:8px; cursor:pointer; font-size:0.82rem;">&#8592; Prev</button>
           <button id="modal-next-btn" onclick="navigateModal(1)" style="background:rgba(255,255,255,0.07); border:1px solid var(--border); color:var(--text-primary); padding:0.4rem 1rem; border-radius:8px; cursor:pointer; font-size:0.82rem;">Next &#8594;</button>
@@ -119,7 +119,7 @@
   <div class="panel animate-fadeup" id="postgres-panel" style="display:none; margin-top: 1.5rem;">
     <div class="panel-title"><span class="dot" style="background-color: var(--purple); box-shadow: 0 0 6px var(--purple);"></span> PostgreSQL Database Sync</div>
     <p style="font-size:0.8rem; color:var(--text-secondary); margin-bottom:1rem;">
-      Chunks ko PostgreSQL mein save karo. Table automatically create ho jaegi agar exist nahi karti.
+      Save chunks to PostgreSQL. The table will be automatically created if it does not exist.
     </p>
 
     <!-- Chunk count badge -->
@@ -133,9 +133,9 @@
     </div>
 
     <div class="form-group" style="margin-bottom:1rem;">
-      <label for="pg-doc-name">Table Name <small style="color:var(--text-muted);">(file upload pe auto-fill, ya khud likho)</small></label>
+      <label for="pg-doc-name">Table Name <small style="color:var(--text-muted);">(auto-fills on file upload, or enter manually)</small></label>
       <div style="display:flex; gap:0.6rem; align-items:center;">
-        <input type="text" id="pg-doc-name" placeholder="e.g. resume  ya  ml_notes" style="font-weight:600; color: var(--purple); flex:1;"/>
+        <input type="text" id="pg-doc-name" placeholder="e.g., resume or ml_notes" style="font-weight:600; color: var(--purple); flex:1;"/>
         <span style="color:var(--text-muted); font-size:0.75rem; white-space:nowrap;">&#8594; table name</span>
       </div>
       <small id="pg-table-preview" style="color:var(--cyan); display:block; margin-top:4px; font-family:monospace;"></small>
@@ -220,7 +220,7 @@ function updateTablePreview() {
   const preview = document.getElementById('pg-table-preview');
   if (tableName) {
     document.getElementById('pg-table').value = tableName;
-    preview.textContent = 'Table banegi: ' + tableName;
+    preview.textContent = 'Table will be created as: ' + tableName;
     preview.style.color = 'var(--cyan)';
   } else {
     document.getElementById('pg-table').value = '';
@@ -265,13 +265,13 @@ async function testPostgresConnection() {
 async function storePostgresChunks() {
   const chunks = PipelineState.get('chunks');
   if (!chunks || chunks.length === 0) {
-    showAlert('pg-status', '⚠️ Pehle chunks banao! (upar "Create Chunks" button dabao)', 'warning');
+    showAlert('pg-status', '⚠️ Please create chunks first! (click the "Create Chunks" button above)', 'warning');
     return;
   }
 
   const rawDocName = document.getElementById('pg-doc-name').value.trim();
   if (!rawDocName) {
-    showAlert('pg-status', '⚠️ Table ka naam daalo! (neeche wala field)', 'warning');
+    showAlert('pg-status', '⚠️ Please enter a table name!', 'warning');
     document.getElementById('pg-doc-name').focus();
     document.getElementById('pg-doc-name').style.border = '1.5px solid #fbbf24';
     return;
@@ -282,7 +282,7 @@ async function storePostgresChunks() {
   document.getElementById('pg-table').value = tableName;
 
   setLoading('pg-store-btn', true, '💾 Save to PostgreSQL');
-  showAlert('pg-status', `⏳ ${chunks.length} chunks table "${tableName}" mein store ho rahe hain...`, 'info');
+  showAlert('pg-status', `⏳ Storing ${chunks.length} chunks into table "${tableName}"...`, 'info');
 
   try {
     const strategy = document.getElementById('strategy').value;
@@ -304,7 +304,7 @@ async function storePostgresChunks() {
     if (!res.ok) throw new Error(data.detail || 'Failed to store chunks');
 
     showAlert('pg-status',
-      `✅ ${data.inserted_count} chunks successfully save ho gaye table "${tableName}" mein!<br>
+      `✅ Successfully saved ${data.inserted_count} chunks to table "${tableName}"!<br>
        <span style="font-size:0.78rem; color:var(--text-muted);">pgAdmin → Databases → postgres → Schemas → public → Tables → ${tableName}</span>`,
       'success');
 
@@ -316,7 +316,7 @@ async function storePostgresChunks() {
     setTimeout(() => viewSavedData(tableName), 600);
 
   } catch(err) {
-    showAlert('pg-status', `❌ Save failed: ${err.message}<br><small>Check karo: server chal raha ho, URI sahi ho, PostgreSQL on hoon.</small>`, 'error');
+    showAlert('pg-status', `❌ Save failed: ${err.message}<br><small>Make sure the server is running, the URI is correct, and PostgreSQL is active.</small>`, 'error');
   } finally {
     setLoading('pg-store-btn', false, '💾 Save to PostgreSQL');
   }
@@ -325,7 +325,7 @@ async function storePostgresChunks() {
 async function viewSavedData(tableNameOverride) {
   const tableName = tableNameOverride || document.getElementById('pg-view-btn').dataset.table || document.getElementById('pg-table').value;
   if (!tableName) {
-    showAlert('pg-status', '⚠️ Pehle chunks save karo!', 'warning');
+    showAlert('pg-status', '⚠️ Please save chunks first!', 'warning');
     return;
   }
 
@@ -429,7 +429,7 @@ async function runChunking() {
            onclick="openChunkModal(${i})"
            onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 8px 30px rgba(56,189,248,0.15)'"
            onmouseout="this.style.transform=''; this.style.boxShadow=''"
-           title="Click karke full text dekho">
+           title="Click to view full text">
         <div class="chunk-header">
           <span class="chunk-id">chunk_${String(c.id).padStart(3,'0')}</span>
           <div style="display:flex; align-items:center; gap:0.6rem;">

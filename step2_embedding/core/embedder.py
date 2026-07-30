@@ -124,7 +124,7 @@ def embed_table(uri: str, source_table: str, batch_size: int = 32) -> dict:
 
     if not rows:
         conn.close()
-        return {"inserted": 0, "message": "Sab chunks pehle se embed hain!"}
+        return {"inserted": 0, "message": "All chunks are already embedded!"}
 
     inserted = 0
     for i in range(0, len(rows), batch_size):
@@ -152,7 +152,7 @@ def embed_table(uri: str, source_table: str, batch_size: int = 32) -> dict:
         "inserted": inserted,
         "model": _MODEL_NAME,
         "dimensions": 384,
-        "message": f"{inserted} chunks embed ho gaye! Model: {_MODEL_NAME}, Dims: 384"
+        "message": f"Successfully embedded {inserted} chunks! Model: {_MODEL_NAME}, Dims: 384"
     }
 
 

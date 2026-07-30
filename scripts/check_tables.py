@@ -4,7 +4,7 @@ import urllib.request, json
 try:
     req = urllib.request.urlopen('http://127.0.0.1:8001/api/tables', timeout=5)
     data = json.loads(req.read().decode())
-    print("=== Step 2 API se tables ===")
+    print("=== Tables from Step 2 API ===")
     for t in data['tables']:
         print(f"  - {t['name']}")
     print(f"Total: {len(data['tables'])} tables")
@@ -24,8 +24,8 @@ cur.execute("""
     ORDER BY t.tablename;
 """)
 rows = cur.fetchall()
-print("\n=== DB mein sabhi tables aur unka 'content' column status ===")
+print("\n=== All tables in DB and their 'content' column status ===")
 for r in rows:
-    status = "CONTENT COLUMN HAI (embed hogi)" if r[1] else "content column NAHI (nahi dikhegi)"
+    status = "CONTENT COLUMN PRESENT (will be embedded)" if r[1] else "content column MISSING (will not be displayed)"
     print(f"  {r[0]}: {status}")
 conn.close()
